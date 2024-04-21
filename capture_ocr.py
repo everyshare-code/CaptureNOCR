@@ -98,7 +98,6 @@ class ScreenCaptureTool(tk.Tk):
         filepath = os.path.join(capture_path, f'{timestamp}.jpg')
         screenshot.save(filepath)
         self.detect_text(filepath)
-        # screenshot.save("capture.png")  # 저장할 파일명
 
     def detect_text(self,path):
         """Detects text in the file."""
