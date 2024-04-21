@@ -18,19 +18,19 @@ class ScreenCaptureTool(tk.Tk):
 
 
         # 창 설정
-        self.attributes("-alpha", 0.2)  # 투명도 조절
+        self.attributes("-alpha", 0.1)  # 투명도 조절
         self.attributes("-topmost", True)
-        self.overrideredirect(True)
-        self.geometry(f'{self.winfo_screenwidth()}x{self.winfo_screenheight()+100}')
-        self.attributes("-fullscreen", True)
+        # self.overrideredirect(True) 윈도우 매니저 우회하여 창 만들기
+        self.geometry(f'{self.winfo_screenwidth()}x{self.winfo_screenheight()+200}')
+        # self.attributes("-fullscreen", True)
 
-        # 마우스 이벤트 바인딩
+        # 이벤트 바인딩
         self.canvas.bind("<ButtonPress-1>", self.on_click)
         self.canvas.bind("<B1-Motion>", self.on_drag)
         self.canvas.bind("<ButtonRelease-1>", self.on_release)
-
+        # self.canvas.bind("<Escape>", lambda e: self.destroy())
         self.canvas.focus_set()
-        self.canvas.bind("<Escape>", self.on_esc_keypress)
+        self.canvas.bind("<KeyPress>", self.on_key_press)
 
     def on_click(self, event):
         self.start_x = event.x
@@ -44,7 +44,6 @@ class ScreenCaptureTool(tk.Tk):
                 self.start_y,
                 outline="red",
                 width=2)
-
     def on_drag(self, event):
         self.canvas.coords(
             self.rect,
@@ -52,7 +51,6 @@ class ScreenCaptureTool(tk.Tk):
             self.start_y,
             event.x,
             event.y)
-
     def on_release(self, event):
         x1 = min(self.start_x, event.x)
         y1 = min(self.start_y, event.y)
@@ -60,8 +58,11 @@ class ScreenCaptureTool(tk.Tk):
         y2 = max(self.start_y, event.y)
         self.capture_screen(x1, y1, x2, y2)
         self.destroy()
-
-    def on_esc_keypress(self, event):
+    def on_key_press(self,event):
+        print(event.keysym)
+        if event.keysym == 'Escape':
+            self.destroy()
+    def on_esc_keypress(self,event):
         self.destroy()
     def capture_screen(self, x1, y1, x2, y2):
         bbox = (
@@ -89,8 +90,6 @@ class ScreenCaptureTool(tk.Tk):
         from google.cloud import vision
 
         client = vision.ImageAnnotatorClient()
-
-
 
         content = Image.open(path)
         if content.mode == 'RGBA':
