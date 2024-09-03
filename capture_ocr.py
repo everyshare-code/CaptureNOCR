@@ -99,34 +99,39 @@ class ScreenCaptureTool(tk.Tk):
         screenshot.save(filepath)
         self.detect_text(filepath)
 
-    def detect_text(self,path):
+    def detect_text(self, path):
         """Detects text in the file."""
+        # Google Cloud Vision 사용
+        # from google.cloud import vision
+        # client = vision.ImageAnnotatorClient()
+        #
+        # content = Image.open(path)
+        # if content.mode == 'RGBA':
+        #     content = content.convert('RGB')
+        # # 이미지 선명도 조정
+        # sharpened = content.filter(ImageFilter.SHARPEN)
+        # byte_stream = io.BytesIO()
+        # sharpened.save(byte_stream, format='JPEG')
+        # byte_stream.seek(0)
+        #
+        # # google vision에 맞는 이미지 객체 생성
+        # image = vision.Image(content=byte_stream.read())
+        #
+        # try:
+        #     # 해당 이미지에서 텍스트 추출
+        #     response = client.text_detection(image=image)
+        #     if response.full_text_annotation:
+        #         # 감지된 전체 텍스트
+        #         full_text = response.full_text_annotation.text
+        #         # 클립보드에 복사
+        #         pyperclip.copy(full_text)
+        #         # 캡처된 이미지 삭제
+        #         os.remove(path)
+        # except Exception as e:
+        #     print("Error detecting text:", e)
 
-        from google.cloud import vision
 
-        client = vision.ImageAnnotatorClient()
-
-        content = Image.open(path)
-        if content.mode == 'RGBA':
-            content = content.convert('RGB')
-        # 이미지 선명도 조정
-        sharpened = content.filter(ImageFilter.SHARPEN)
-        byte_stream = io.BytesIO()
-        sharpened.save(byte_stream, format='JPEG')
-        byte_stream.seek(0)
-
-        # google vision에 맞는 이미지 객체 생성
-        image = vision.Image(content=byte_stream.read())
-
-        try:
-            # 해당 이미지에서 텍스트 추출
-            response = client.text_detection(image=image)
-            if response.full_text_annotation:
-                # 감지된 전체 텍스트
-                full_text = response.full_text_annotation.text
-                # 클립보드에 복사
-                pyperclip.copy(full_text)
-                # 캡처된 이미지 삭제
-                os.remove(path)
-        except Exception as e:
-            print("Error detecting text:", e)
+        import easyocr
+        reader = easyocr.Reader(['ko','en'], gpu=False)
+        generated_text = reader.readtext(path)
+        print(generated_text)
