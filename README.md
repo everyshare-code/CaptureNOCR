@@ -28,6 +28,7 @@ ScreenCaptureTool
 ## 설치 방법
 1. Python을 설치합니다.
 2. 필요한 라이브러리를 설치합니다:
+   
    ```bash
    pip install tkinter google-cloud-vision
    ```
